@@ -1,0 +1,42 @@
+
+#create-industry
+{
+    /* float: right; */
+    margin-right: 2px;
+    width: 20%;
+    margin: 10px;
+}
+
+#create-industry , #create-device
+{
+    float: right;
+    margin-right: 2px;
+}
+
+.table-header input
+{
+    border-radius: 6px
+}
+
+.p-input-icon-left
+{
+    float: right;
+}
+
+#edit-btn , #remove-btn{
+    margin: 4px;
+}
+
+.invalid-feedback{
+    display: block;
+}
+
+input.ng-invalid {
+    border: 1px solid #dc3545;
+ }
+
+ input.ng-valid {
+    border: 1px solid #3da30e;
+ }
+
+ 

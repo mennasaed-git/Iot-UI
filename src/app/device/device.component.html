@@ -1,0 +1,289 @@
+<p-toast></p-toast>
+
+<div class="row" style="margin: 2px;">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <button type="button" id="create-device" class="btn btn-info"
+                    data-bs-toggle="modal" data-bs-target="#create-Modal">
+                        Create New Device
+                      </button>
+                </div>
+                <div class="row">
+                <p-table #dv [value]="filteredDevices" [resizableColumns]="true"
+                 dataKey="id" styleClass="p-datatable-device" [rowHover]="true" [globalFilterFields]="['Name']"
+                    [rows]="6" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="loading"
+                    [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    >
+                    <ng-template pTemplate="caption">
+                        <div class="table-header">
+                            List of Devices
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="dv.filterGlobal($any($event.target).value , 'contains')"
+                                 placeholder="" />
+                            </span>
+                            <div class="row">
+                            <select class="form-control" name="filterIndustry" id="filterIndustry" 
+                             #filterIndustry="ngModel" [(ngModel)]="selectedIndustry.id" 
+                             (ngModelChange)="onChangeIndustry($event)" required>
+                            <option value="0" [selected]="selectedIndustry.id == 0" >All</option>
+                            <option *ngFor="let item of industries" [selected]="selectedIndustry.id == item.id" [value]="item.id">
+                               {{item.Name}}</option>  
+                             </select>
+                            </div>
+                           
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="id">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    ID
+                                    <p-sortIcon field="id"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="Name">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Name
+                                    <p-sortIcon field="Name"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="AdditionTime">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Addition Time
+                                    <p-sortIcon field="AdditionTime"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="Count">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Number Of Devices
+                                    <p-sortIcon field="Count"></p-sortIcon>
+                                </div>
+                            </th> 
+                            <th pSortableColumn="Fees">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Fees
+                                    <p-sortIcon field="Fees"></p-sortIcon>
+                                </div>
+                            </th>  
+                            <th pSortableColumn="IndustryId">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Industry
+                                    <p-sortIcon field="IndustryId"></p-sortIcon>
+                                </div>
+                            </th>    
+                            <th ></th>
+                        </tr>
+                        
+                    </ng-template>
+                    <ng-template pTemplate="body" let-device let-index>
+                        <tr class="p-selectable-row">
+                            <td>
+                                {{device.id}}
+                            </td>
+                            <td>
+                                {{device.Name}}
+                            </td>
+                            <td>
+                                {{device.AdditionTime}}
+                            </td>
+                            <td>
+                                {{device.Count}}
+                            </td>
+                            <td >
+                                {{device.Fees}}
+                               
+                            </td>
+                            <td *ngIf="device.industry">
+                                <!-- {{industries[index].Name}} -->
+                                {{device.industry.Name}}
+                               
+                            </td>
+                            <td style="text-align: center">
+                                
+                        <button  type="button" id="edit-btn" class="btn btn-outline-success"
+                        (click)="ShowEdit(device.id)" >Edit</button>
+
+                        <button  type="button" id="remove-btn" class="btn btn-outline-danger"
+                         data-bs-toggle="modal" data-bs-target="#confirmdialog"
+                        (click)="SelectDevice(device.id)">Remove</button>
+
+                        
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="8">No Industries found.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<!-- Create New Device Dialog -->
+<div class="modal fade" id="create-Modal" tabindex="-1" aria-labelledby="create-ModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="exampleModalLabel">Create Device</h1>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form #createform="ngForm">
+        <div class="mb-3">
+            <label for="Name" class="form-label">Device Name</label>
+            <input type="text" name="Name" class="form-control" id="Name"
+            #Name="ngModel" [(ngModel)]="newDevice.Name" required>
+            
+            <div class="invalid-feedback" *ngIf="Name.invalid">
+                <p >Field is required</p>
+              </div>
+            </div>
+           
+          <div class="mb-3">
+            <label for="AdditionTime" class="form-label">Addition Time</label>
+            
+            <input type="date" name="AdditionTime" 
+            #AdditionTime="ngModel" class="form-control" id="AdditionTime" 
+            [(ngModel)]="newDevice.AdditionTime" required>
+
+            <div *ngIf="AdditionTime.invalid" class="invalid-feedback">
+              <p>  Field is required.   </p>
+          </div>  
+        </div>
+          <div class="mb-3">
+            <label for="Count" class="form-label">Number Of Devices</label>
+            <input type="number" name="Count" min="0" max="100" 
+            #Count="ngModel" class="form-control" id="Count" [(ngModel)]="newDevice.Count" required>
+            <div *ngIf="Count.invalid" class="invalid-feedback" >
+              <p>  Field is required . Min is 0 ,  Max is 100 . </p>
+          </div>  
+        </div>
+          <div class="mb-3">
+            <label for="Fees" class="form-label">Fees</label>
+            <input type="number" min="0" name="Fees" 
+            #Fees="ngModel" class="form-control" id="Fees" [(ngModel)]="newDevice.Fees" required>
+            <div *ngIf="Fees.invalid" class="invalid-feedback" >
+                Field is required.   Min is 0
+          </div>  
+        </div>
+          <div class="mb-3">
+            <label for="IndustryId" class="form-label">Industry</label>
+            <select class="form-control" name="IndustryId" id="IndustryId" 
+            #IndustryId="ngModel" [(ngModel)]="newDevice.IndustryId" required>
+                <option *ngFor="let item of industries" [value]=item.id>
+                    {{item.Name}}</option>  
+              </select>
+              <div *ngIf="IndustryId.invalid" class="invalid-feedback" >
+                Field is required.  
+          </div> 
+          </div>
+          
+          </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" (click)="CreateDevice()" [disabled]="createform.invalid">Submit</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Edit Exiting Device Dialog -->
+<div class="modal fade" id="edit-Modal" tabindex="-1" aria-labelledby="create-ModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="exampleModalLabel">Edit {{SelectedDevice.Name}}</h1>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form #editform="ngForm">
+        <div class="mb-3">
+            <label for="Name" class="form-label">Device Name</label>
+            <input type="text" name="Name" class="form-control" id="Name"
+            #eName="ngModel" [(ngModel)]="SelectedDevice.Name" required>
+            
+            <div class="invalid-feedback" *ngIf="eName.invalid">
+                <p >Field is required</p>
+              </div>
+            </div>
+           
+          <div class="mb-3">
+            <label for="AdditionTime" class="form-label">Addition Time</label>
+            
+            <input type="date" name="AdditionTime" 
+            #eAdditionTime="ngModel" class="form-control" id="AdditionTime" 
+            [(ngModel)]="SelectedDevice.AdditionTime" required>
+
+            <div *ngIf="eAdditionTime.invalid" class="invalid-feedback">
+              <p>  Field is required.   </p>
+          </div>  
+        </div>
+          <div class="mb-3">
+            <label for="Count" class="form-label">Number Of Devices</label>
+            <input type="number" name="Count" min="0" max="100" 
+            #eCount="ngModel" class="form-control" id="Count" [(ngModel)]="SelectedDevice.Count" required>
+            <div *ngIf="eCount.invalid" class="invalid-feedback" >
+              <p>  Field is required. Min is 0 , Max is 100 . </p>
+          </div>  
+        </div>
+          <div class="mb-3">
+            <label for="Fees" class="form-label">Fees</label>
+            <input type="number" min="0" name="Fees" 
+            #eFees="ngModel" class="form-control" id="Fees" [(ngModel)]="SelectedDevice.Fees" required>
+            <div *ngIf="eFees.invalid" class="invalid-feedback" >
+                Field is required.   Min is 0. 
+          </div>  
+        </div>
+          <div class="mb-3">
+            <label for="IndustryId" class="form-label">Industry</label>
+            <select class="form-control" name="IndustryId" id="IndustryId"
+            #eIndustryId="ngModel"  [(ngModel)]="SelectedDevice.IndustryId"  required>
+                <option *ngFor="let item of industries" 
+                [selected]="item.id==SelectedDevice.IndustryId" [value]="item.id" >
+                    {{item.Name}}</option>  
+              </select>
+              <div *ngIf="eIndustryId.invalid" class="invalid-feedback" >
+                Field is required.  
+          </div> 
+          </div>
+         
+          </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" (click)="EditDevice()" [disabled]="editform.invalid">Submit</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- Remove Confirmation Dialog -->
+<div class="modal" tabindex="-1" id="confirmdialog" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Confirm </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <h3>Are you sure you want to Remove {{SelectedDevice.Name}}?</h3>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary"  (click)="RemoveDevice()"
+        >Confirm</button>
+    </div>
+    </div>
+</div>
+</div>

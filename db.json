@@ -1,0 +1,46 @@
+{
+  "Industries": [
+    {
+      "Name": "Agriculture",
+      "id": 1
+    },
+    {
+      "Name": "transportation",
+      "id": 2
+    },
+    {
+      "Name": "Aquaculture",
+      "id": 3
+    },
+    {
+      "Name": "health care",
+      "id": 4
+    }
+  ],
+  "Devices": [
+    {
+      "Name": "device",
+      "AdditionTime": "2022-11-05",
+      "Count": 10,
+      "Fees": 200,
+      "IndustryId": 1,
+      "id": 1
+    },
+    {
+      "Name": "Device 1",
+      "AdditionTime": "2022-12-02",
+      "Count": 67,
+      "Fees": 78,
+      "IndustryId": 3,
+      "id": 2
+    },
+    {
+      "Name": "mouse",
+      "AdditionTime": "2022-11-24",
+      "Count": 10,
+      "Fees": 10,
+      "IndustryId": 2,
+      "id": 3
+    }
+  ]
+}
